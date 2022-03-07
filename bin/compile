@@ -114,5 +114,5 @@ export CODEARTIFACT_AUTH_TOKEN=$($CODEARTIFACT_AUTH_TOKEN_COMMAND)
 # Set Poetry authentication for AWS CodeArtifacts if it exists
 if [ -n  "$CODEARTIFACT_AUTH_TOKEN" ]; then
     log "using AWS CodeArtifact"
-    poetry config http-basic.$CODEARTIFACT_REPO_NAME aws $CODEARTIFACT_AUTH_TOKEN
+    poetry config http-basic.$AWS_CODEARTIFACT_REPO_NAME aws $CODEARTIFACT_AUTH_TOKEN
 fi
