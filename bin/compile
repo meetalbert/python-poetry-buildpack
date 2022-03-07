@@ -21,6 +21,10 @@ for env_file in "$ENV_DIR"/POETRY_* ; do
     export "$(basename "$env_file")=$(cat "$env_file" 2>/dev/null)"
 done
 
+for env_file in "$ENV_DIR"/AWS_CODEARTIFACT_* ; do
+    export "$(basename "$env_file")=$(cat "$env_file" 2>/dev/null)"
+done
+
 for env_file in $BUILDPACK_VARIABLES ; do
     [ -f "$ENV_DIR/$env_file" ] && export "$(basename "$env_file")=$(cat "$ENV_DIR/$env_file" 2>/dev/null)"
 done
@@ -101,7 +105,9 @@ else
     exit 1
 fi
 
-# Heroku installs from the requirements.txt file. Using .netrc allows he POETRY_HTTP_BASIC_PYPI_* values to be used by pip at install time.
-if [ -n  "$POETRY_HTTP_BASIC_PYPI_PASSWORD" ]; then
-    echo "machine $POETRY_PYPI_PRIVATE_REPOSITORY login $POETRY_HTTP_BASIC_PYPI_USERNAME password $POETRY_HTTP_BASIC_PYPI_PASSWORDx" >> ~/.netrc
-fi
+export AWS_ACCESS_KEY_ID=$AWS_CODEARTIFACT_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY=$AWS_CODEARTIFACT_SECRET_ACCESS_KEY
+export AWS_REGION=$AWS_CODEARTIFACT_REGION
+
+CODEARTIFACT_AUTH_TOKEN_COMMAND="aws codeartifact get-authorization-token --domain $AWS_CODEARTIFACT_DOMAIN --domain-owner $AWS_CODEARTIFACT_DOMAIN_OWNER --query authorizationToken --output text --region $AWS_CODEARTIFACT_REGION"
+export CODEARTIFACT_AUTH_TOKEN=$(CODEARTIFACT_AUTH_TOKEN_COMMAND)
