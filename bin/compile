@@ -52,6 +52,23 @@ if [ -f "$PATH_TO_POETRY_ENV" ] ; then
     . "$PATH_TO_POETRY_ENV"
 fi
 
+export AWS_ACCESS_KEY_ID=$AWS_CODEARTIFACT_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY=$AWS_CODEARTIFACT_SECRET_ACCESS_KEY
+
+CODEARTIFACT_AUTH_TOKEN_COMMAND="aws codeartifact get-authorization-token --domain $AWS_CODEARTIFACT_DOMAIN --domain-owner $AWS_CODEARTIFACT_DOMAIN_OWNER --query authorizationToken --output text --region $AWS_CODEARTIFACT_REGION"
+export CODEARTIFACT_AUTH_TOKEN=$($CODEARTIFACT_AUTH_TOKEN_COMMAND)
+
+# Set Poetry authentication for AWS CodeArtifacts if it exists
+if [ -n  "$CODEARTIFACT_AUTH_TOKEN" ]; then
+    log "using AWS CodeArtifact"
+    # echo "machine $AWS_CODEARTIFACT_PYPI_URL login aws password $CODEARTIFACT_AUTH_TOKEN" >> ~/.netrc
+    # # chown $USER ~/.netrc
+    # chmod 0600 ~/.netrc
+    # poetry config http-basic.$CODEARTIFACT_REPO_NAME aws $CODEARTIFACT_AUTH_TOKEN
+    poetry config http-basic.$AWS_CODEARTIFACT_REPO_NAME aws $CODEARTIFACT_AUTH_TOKEN
+fi
+
+
 REQUIREMENTS_FILE="requirements.txt"
 
 log "Export $REQUIREMENTS_FILE from Poetry"
@@ -69,6 +86,9 @@ fi
 # poetry exports local dependencies as editable by default (https://github.com/python-poetry/poetry/issues/897)
 poetry export -f "$REQUIREMENTS_FILE" "${EXPORT_PARAMETERS[@]}" > "$REQUIREMENTS_FILE.orig"
 sed -e 's/^-e //' < "$REQUIREMENTS_FILE.orig" > "$REQUIREMENTS_FILE" && rm "$REQUIREMENTS_FILE.orig"
+
+log "Spitting out requirement.txt"
+cat $REQUIREMENTS_FILE
 
 RUNTIME_FILE="runtime.txt"
 
@@ -103,20 +123,4 @@ if [[ "$PYTHON_RUNTIME_VERSION" =~ ^[2-9](\.[0-9]+){2}$ ]] ; then
 else
     log "$PYTHON_RUNTIME_VERSION is not valid, please specify an exact Python version (e.g. 3.8.1) in your pyproject.toml (and thus poetry.lock)" >&2
     exit 1
-fi
-
-export AWS_ACCESS_KEY_ID=$AWS_CODEARTIFACT_ACCESS_KEY_ID
-export AWS_SECRET_ACCESS_KEY=$AWS_CODEARTIFACT_SECRET_ACCESS_KEY
-
-CODEARTIFACT_AUTH_TOKEN_COMMAND="aws codeartifact get-authorization-token --domain $AWS_CODEARTIFACT_DOMAIN --domain-owner $AWS_CODEARTIFACT_DOMAIN_OWNER --query authorizationToken --output text --region $AWS_CODEARTIFACT_REGION"
-export CODEARTIFACT_AUTH_TOKEN=$($CODEARTIFACT_AUTH_TOKEN_COMMAND)
-
-# Set Poetry authentication for AWS CodeArtifacts if it exists
-if [ -n  "$CODEARTIFACT_AUTH_TOKEN" ]; then
-    log "using AWS CodeArtifact"
-    echo "machine $AWS_CODEARTIFACT_PYPI_URL login aws password $CODEARTIFACT_AUTH_TOKEN" >> ~/.netrc
-    # chown $USER ~/.netrc
-    chmod 0600 ~/.netrc
-    # poetry config http-basic.$CODEARTIFACT_REPO_NAME aws $CODEARTIFACT_AUTH_TOKEN
-    # poetry config http-basic.$AWS_CODEARTIFACT_REPO_NAME aws $CODEARTIFACT_AUTH_TOKEN
 fi
