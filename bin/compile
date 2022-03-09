@@ -53,17 +53,17 @@ if [ -f "$PATH_TO_POETRY_ENV" ] ; then
     . "$PATH_TO_POETRY_ENV"
 fi
 
-# export AWS_ACCESS_KEY_ID=$AWS_CODEARTIFACT_ACCESS_KEY_ID
-# export AWS_SECRET_ACCESS_KEY=$AWS_CODEARTIFACT_SECRET_ACCESS_KEY
+export AWS_ACCESS_KEY_ID=$AWS_CODEARTIFACT_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY=$AWS_CODEARTIFACT_SECRET_ACCESS_KEY
 
-# CODEARTIFACT_AUTH_TOKEN_COMMAND="aws codeartifact get-authorization-token --domain $AWS_CODEARTIFACT_DOMAIN --domain-owner $AWS_CODEARTIFACT_DOMAIN_OWNER --query authorizationToken --output text --region $AWS_CODEARTIFACT_REGION"
-# export CODEARTIFACT_AUTH_TOKEN=$($CODEARTIFACT_AUTH_TOKEN_COMMAND)
+CODEARTIFACT_AUTH_TOKEN_COMMAND="aws codeartifact get-authorization-token --domain $AWS_CODEARTIFACT_DOMAIN --domain-owner $AWS_CODEARTIFACT_DOMAIN_OWNER --query authorizationToken --output text --region $AWS_CODEARTIFACT_REGION"
+export CODEARTIFACT_AUTH_TOKEN=$($CODEARTIFACT_AUTH_TOKEN_COMMAND)
 
 # CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain $AWS_CODEARTIFACT_DOMAIN --domain-owner $AWS_CODEARTIFACT_DOMAIN_OWNER --query authorizationToken --output text --region $AWS_CODEARTIFACT_REGION --duration-seconds 900`
 # echo "token = $AWS_CODEARTIFACT_TEMP_TOKEN"
 # # PIP_EXTRA_INDEX_URL=https://aws:$CODEARTIFACT_AUTH_TOKEN@albert-devops-codeartifact-538001969475.d.codeartifact.us-west-2.amazonaws.com/pypi/pypi/simple/
 # PIP_EXTRA_INDEX_URL=https://aws:$AWS_CODEARTIFACT_TEMP_TOKEN@albert-devops-codeartifact-538001969475.d.codeartifact.us-west-2.amazonaws.com/pypi/pypi/simple/
-EXTRA_INDEX_URL="https://aws:$AWS_CODEARTIFACT_PIP_EXTRA_TOKEN@$AWS_CODEARTIFACT_URL"
+EXTRA_INDEX_URL="https://aws:$CODEARTIFACT_AUTH_TOKEN@$AWS_CODEARTIFACT_URL"
 # echo "export PIP_EXTRA_INDEX_URL=$PIP_EXTRA_INDEX_URL" > $BP_DIR/export
 # echo "catting export"
 # cat $BP_DIR/export
