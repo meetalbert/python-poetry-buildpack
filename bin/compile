@@ -67,10 +67,11 @@ fi
 # echo "catting export"
 # cat $BP_DIR/export
 
-  if [ -w "$bp_dir" ]; then
+  if [ -w "$BP_DIR" ]; then
+    log "setting PIP_EXTRA_INDEX_URL"
     echo "export PIP_EXTRA_INDEX_URL=\"$AWS_CODEARTIFACT_PIP_EXTRA_INDEX_URL\"" > "$BP_DIR/export"
   fi
-echo "catting $BP_DIR/export"
+log "catting $BP_DIR/export"
 cat "$BP_DIR/export"
 # # Set Poetry authentication for AWS CodeArtifacts if it exists
 # if [ -n  "$CODEARTIFACT_AUTH_TOKEN" ]; then
