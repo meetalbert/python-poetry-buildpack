@@ -63,13 +63,14 @@ fi
 # echo "token = $AWS_CODEARTIFACT_TEMP_TOKEN"
 # # PIP_EXTRA_INDEX_URL=https://aws:$CODEARTIFACT_AUTH_TOKEN@albert-devops-codeartifact-538001969475.d.codeartifact.us-west-2.amazonaws.com/pypi/pypi/simple/
 # PIP_EXTRA_INDEX_URL=https://aws:$AWS_CODEARTIFACT_TEMP_TOKEN@albert-devops-codeartifact-538001969475.d.codeartifact.us-west-2.amazonaws.com/pypi/pypi/simple/
+EXTRA_INDEX_URL="https://aws:$AWS_CODEARTIFACT_PIP_EXTRA_TOKEN@albert-devops-codeartifact-538001969475.d.codeartifact.us-west-2.amazonaws.com/pypi/pypi/simple/"
 # echo "export PIP_EXTRA_INDEX_URL=$PIP_EXTRA_INDEX_URL" > $BP_DIR/export
 # echo "catting export"
 # cat $BP_DIR/export
 
   if [ -w "$BP_DIR" ]; then
     log "setting PIP_EXTRA_INDEX_URL"
-    echo "export PIP_EXTRA_INDEX_URL=\"$AWS_CODEARTIFACT_PIP_EXTRA_INDEX_URL\"" > "$BP_DIR/export"
+    echo "export PIP_EXTRA_INDEX_URL=\"$EXTRA_INDEX_URL\"" > "$BP_DIR/export"
   fi
 log "catting $BP_DIR/export"
 cat "$BP_DIR/export"
